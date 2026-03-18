@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blands Real Estate Investors - AI Seller Leads Dashboard</title>
+
+<style>
+body{
+font-family:Arial;
+background:#ffe4f1;
+padding:20px;
+color:#333;
+}
+.container{
+max-width:1200px;
+margin:auto;
+}
+.header{
+background:#ffd6ea;
+padding:25px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.practice-box,.talk-box,.form-box{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+margin-bottom:20px;
+}
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+.stat-card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.stat-card p{
+font-size:28px;
+font-weight:bold;
+}
+.hot-num{color:#ff1493}
+.warm-num{color:#ff69b4}
+.cold-num{color:#c0c0c0}
+.controls{
+background:white;
+padding:18px;
+border-radius:12px;
+margin-bottom:20px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:10px;
+}
+input,select,textarea{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+textarea{
+width:100%;
+min-height:100px;
+}
+button{
+border:none;
+border-radius:8px;
+padding:10px 14px;
+cursor:pointer;
+font-size:14px;
+}
+.btn-primary{
+background:#ff69b4;
+color:white;
+}
+.btn-secondary{
+background:#fff0f7;
+border:1px solid #ffb6d9;
+color:#ff1493;
+}
+.btn-delete{
+background:#ff1493;
+color:white;
+}
+.lead-grid{
+display:grid;
+gap:16px;
+}
+.lead-card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+border-left:8px solid #ddd;
+}
+.lead-card.hot{border-left-color:#ff69b4}
+.lead-card.warm{border-left-color:#ffb6d9}
+.lead-card.cold{border-left-color:#d8d8d8}
+.lead-owner{
+font-size:22px;
+font-weight:bold;
+}
+.lead-address{
+color:#555;
+margin-bottom:10px;
+}
+.detail-box{
+background:#f8f9fa;
+padding:10px;
+border-radius:8px;
+margin-bottom:6px;
+}
+.buttons{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+.form-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:10px;
+margin-top:10px;
+}
+.full{
+grid-column:1/-1;
+}
+.voice-row{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:10px;
+margin-top:10px;
+}
+.chat-log{
+background:#fff7fb;
+border:1px solid #ffd1e6;
+border-radius:10px;
+padding:12px;
+min-height:220px;
+max-height:340px;
+overflow:auto;
+margin-top:12px;
+}
+.msg{
+padding:10px 12px;
+border-radius:10px;
+margin-bottom:10px;
+max-width:85%;
+line-height:1.4;
+white-space:pre-wrap;
+}
+.msg.user{
+background:#f2f2f2;
+margin-left:auto;
+}
+.msg.ai{
+background:#ffe4f1;
+margin-right:auto;
+}
+.small{
+font-size:12px;
+color:#777;
+}
+.status-pill{
+display:inline-block;
+padding:6px 10px;
+border-radius:999px;
+background:#fff0f7;
+border:1px solid #ffb6d9;
+color:#ff1493;
+font-size:12px;
+margin-left:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>Blands Real Estate Investors</h1>
+<p>AI Seller Leads Dashboard — Your AI qualifies sellers first. You only talk to motivated sellers.</p>
+</div>
+
+<div class="practice-box">
+<h2>Practice With AI Voice</h2>
+<textarea id="aiPracticeInput" placeholder="Type your seller script here..."></textarea>
+
+<div class="voice-row">
+<div>
+<label style="display:block;margin-bottom:6px;font-size:13px;color:#666;">Voice</label>
+<select id="voiceSelect"></select>
+</div>
+
+<div>
+<label style="display:block;margin-bottom:6px;font-size:13px;color:#666;">Speed</label>
+<select id="rateSelect">
+<option value="0.85">0.85</option>
+<option value="0.9" selected>0.90</option>
+<option value="0.95">0.95</option>
+<option value="1">1.00</option>
+</select>
+</div>
+
+<div>
+<label style="display:block;margin-bottom:6px;font-size:13px;color:#666;">Pitch</label>
+<select id="pitchSelect">
+<option value="0.9">0.90</option>
+<option value="1" selected>1.00</option>
+<option value="1.1">1.10</option>
+</select>
+</div>
+</div>
+
+<div style="margin-top:10px;">
+<button class="btn-primary" onclick="speak()">Read Script Out Loud</button>
+<button class="btn-secondary" onclick="stop()">Stop Voice</button>
+<button class="btn-secondary" onclick="defaultScript()">Load My Default Script</button>
+<button class="btn-secondary" onclick="pickBestVoice()">Use Best Human Voice</button>
+</div>
+</div>
+
+<div class="talk-box">
+<h2>Seller Call Practice</h2>
+<p style="margin-bottom:8px;">In this mode, <strong>Ava stays the caller the whole time</strong>. You answer like the seller.</p>
+
+<div class="voice-row">
+<div>
+<label style="display:block;margin-bottom:6px;font-size:13px;color:#666;">Mic Status</label>
+<div><span id="micStatus" class="status-pill">Idle</span></div>
+</div>
+
+<div>
+<label style="display:block;margin-bottom:6px;font-size:13px;color:#666;">Call Status</label>
+<div><span id="callStatus" class="status-pill">Not Started</span></div>
+</div>
+</div>
+
+<div class="buttons" style="margin-top:10px;">
+<button class="btn-primary" onclick="startSellerPractice()">Start Practice Call</button>
+<button class="btn-secondary" onclick="startTalking()">Start Talking</button>
+<button class="btn-secondary" onclick="stopTalking()">Stop Talking</button>
+<button class="btn-secondary" onclick="clearPracticeChat()">Clear Practice</button>
+</div>
+
+<div id="practiceLog" class="chat-log"></div>
+<div class="small" style="margin-top:8px;">
+Ava asks the questions. You answer like the seller.
+</div>
+</div>
+
+<div class="form-box">
+<h2>Add / Edit Lead</h2>
+
+<input type="hidden" id="leadId">
+
+<div class="form-grid">
+<input id="owner" placeholder="Owner Name">
+<input id="phone" placeholder="Phone">
+<input id="address" placeholder="Address">
+
+<select id="status">
+<option>HOT</option>
+<option>WARM</option>
+<option>COLD</option>
+</select>
+
+<input id="type" placeholder="Property Type">
+<input id="condition" placeholder="Condition">
+<input id="price" placeholder="Price">
+<input id="timeline" placeholder="Timeline">
+
+<input id="vacancy" placeholder="Vacancy">
+<input id="cash" placeholder="Cash Offer">
+
+<textarea id="motivation" class="full" placeholder="Motivation"></textarea>
+<textarea id="transcript" class="full" placeholder="Transcript"></textarea>
+</div>
+
+<div class="buttons">
+<button class="btn-primary" onclick="saveLead()">Save Lead</button>
+<button class="btn-secondary" onclick="clearForm()">Clear</button>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat-card">
+Total Leads
+<p id="total">0</p>
+</div>
+
+<div class="stat-card">
+HOT Leads
+<p class="hot-num" id="hot">0</p>
+</div>
+
+<div class="stat-card">
+WARM Leads
+<p class="warm-num" id="warm">0</p>
+</div>
+
+<div class="stat-card">
+COLD Leads
+<p class="cold-num" id="cold">0</p>
+</div>
+</div>
+
+<div class="controls">
+<input id="search" placeholder="Search owner, address, phone..." onkeyup="render()">
+
+<div>
+<button class="btn-secondary" onclick="sampleLead()">Add Sample Lead</button>
+<button class="btn-secondary" onclick="exportLeads()">Export Leads</button>
+</div>
+</div>
+
+<h2>Seller Leads</h2>
+<div id="leads" class="lead-grid"></div>
+
+</div>
+
+<script>
+let leads=[{
+id:1,
+status:"HOT",
+owner:"John Smith",
+phone:"916-555-0123",
+address:"123 Main St Sacramento CA",
+type:"House",
+condition:"Needs roof + paint",
+price:"$210,000",
+timeline:"30 days",
+vacancy:"Vacant",
+cash:"Yes",
+motivation:"Inherited property wants quick sale",
+transcript:"Seller wants 210k and needs repairs"
+}];
+
+function render(){
+let search=document.getElementById("search").value.toLowerCase();
+
+let filtered=leads.filter(l=>
+l.owner.toLowerCase().includes(search)||
+l.address.toLowerCase().includes(search)||
+l.phone.toLowerCase().includes(search)||
+l.motivation.toLowerCase().includes(search)||
+l.transcript.toLowerCase().includes(search)
+);
+
+document.getElementById("total").innerText=filtered.length;
+document.getElementById("hot").innerText=filtered.filter(l=>l.status=="HOT").length;
+document.getElementById("warm").innerText=filtered.filter(l=>l.status=="WARM").length;
+document.getElementById("cold").innerText=filtered.filter(l=>l.status=="COLD").length;
+
+let html="";
+
+filtered.forEach(l=>{
+html+=`
+<div class="lead-card ${l.status.toLowerCase()}">
+<div class="lead-owner">${l.owner}</div>
+<div class="lead-address">${l.address}</div>
+
+<div class="detail-box">Phone: ${l.phone}</div>
+<div class="detail-box">Property: ${l.type}</div>
+<div class="detail-box">Condition: ${l.condition}</div>
+<div class="detail-box">Price: ${l.price}</div>
+<div class="detail-box">Timeline: ${l.timeline}</div>
+<div class="detail-box">Vacancy: ${l.vacancy}</div>
+<div class="detail-box">Cash Offer: ${l.cash}</div>
+<div class="detail-box">Status: ${l.status}</div>
+<div class="detail-box">Motivation: ${l.motivation}</div>
+<div class="detail-box">Transcript: ${l.transcript}</div>
+
+<div class="buttons">
+<button class="btn-primary" onclick="callSeller('${l.phone}')">Call Seller</button>
+<button class="btn-secondary" onclick="editLead(${l.id})">Edit</button>
+<button class="btn-delete" onclick="removeLead(${l.id})">Delete</button>
+</div>
+</div>
+`;
+});
+
+document.getElementById("leads").innerHTML=html;
+}
+
+function saveLead(){
+let id=document.getElementById("leadId").value;
+
+let data={
+id:id?Number(id):Date.now(),
+owner:document.getElementById("owner").value,
+phone:document.getElementById("phone").value,
+address:document.getElementById("address").value,
+status:document.getElementById("status").value,
+type:document.getElementById("type").value,
+condition:document.getElementById("condition").value,
+price:document.getElementById("price").value,
+timeline:document.getElementById("timeline").value,
+vacancy:document.getElementById("vacancy").value,
+cash:document.getElementById("cash").value,
+motivation:document.getElementById("motivation").value,
+transcript:document.getElementById("transcript").value
+};
+
+if(id){
+let index=leads.findIndex(l=>l.id==id);
+if(index!==-1) leads[index]=data;
+}else{
+leads.unshift(data);
+}
+
+clearForm();
+render();
+}
+
+function editLead(id){
+let l=leads.find(x=>x.id==id);
+if(!l) return;
+
+document.getElementById("leadId").value=l.id;
+document.getElementById("owner").value=l.owner;
+document.getElementById("phone").value=l.phone;
+document.getElementById("address").value=l.address;
+document.getElementById("status").value=l.status;
+document.getElementById("type").value=l.type;
+document.getElementById("condition").value=l.condition;
+document.getElementById("price").value=l.price;
+document.getElementById("timeline").value=l.timeline;
+document.getElementById("vacancy").value=l.vacancy;
+document.getElementById("cash").value=l.cash;
+document.getElementById("motivation").value=l.motivation;
+document.getElementById("transcript").value=l.transcript;
+
+window.scrollTo(0,0);
+}
+
+function removeLead(id){
+if(!confirm("Delete lead?")) return;
+leads=leads.filter(l=>l.id!==id);
+render();
+}
+
+function clearForm(){
+document.getElementById("leadId").value="";
+document.getElementById("owner").value="";
+document.getElementById("phone").value="";
+document.getElementById("address").value="";
+document.getElementById("status").value="HOT";
+document.getElementById("type").value="";
+document.getElementById("condition").value="";
+document.getElementById("price").value="";
+document.getElementById("timeline").value="";
+document.getElementById("vacancy").value="";
+document.getElementById("cash").value="";
+document.getElementById("motivation").value="";
+document.getElementById("transcript").value="";
+}
+
+function sampleLead(){
+leads.unshift({
+id:Date.now(),
+status:"HOT",
+owner:"New Seller",
+phone:"000-000-0000",
+address:"New Property Address",
+type:"House",
+condition:"Needs repairs",
+price:"$150,000",
+timeline:"30 days",
+vacancy:"Vacant",
+cash:"Yes",
+motivation:"Sample motivated seller",
+transcript:"Sample AI transcript"
+});
+render();
+}
+
+function exportLeads(){
+let blob=new Blob([JSON.stringify(leads,null,2)],{type:"application/json"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="leads.json";
+a.click();
+}
+
+function callSeller(phone){
+alert("Call seller: "+phone);
+}
+
+let voices=[];
+
+function loadVoices(){
+voices=speechSynthesis.getVoices();
+let select=document.getElementById("voiceSelect");
+select.innerHTML="";
+
+voices.forEach((v,i)=>{
+let option=document.createElement("option");
+option.value=i;
+option.textContent=v.name+" ("+v.lang+")";
+select.appendChild(option);
+});
+
+pickBestVoice(false);
+}
+
+function findBestVoiceIndex(){
+if(!voices.length) return 0;
+
+let preferred=[
+"Microsoft Aria",
+"Microsoft Jenny",
+"Samantha",
+"Google US English",
+"Google UK English Female",
+"Zira",
+"Ava",
+"Serena",
+"Karen"
+];
+
+for(let p of preferred){
+let idx=voices.findIndex(v=>v.name.toLowerCase().includes(p.toLowerCase()));
+if(idx>=0) return idx;
+}
+
+let englishIdx=voices.findIndex(v=>v.lang.toLowerCase().startsWith("en"));
+return englishIdx>=0?englishIdx:0;
+}
+
+function pickBestVoice(speakNow=true){
+let bestIndex=findBestVoiceIndex();
+document.getElementById("voiceSelect").value=bestIndex;
+if(speakNow) speak();
+}
+
+speechSynthesis.onvoiceschanged=loadVoices;
+
+function speakText(text){
+speechSynthesis.cancel();
+let msg=new SpeechSynthesisUtterance(text);
+let voiceIndex=document.getElementById("voiceSelect").value;
+let rate=parseFloat(document.getElementById("rateSelect").value);
+let pitch=parseFloat(document.getElementById("pitchSelect").value);
+if(voices[voiceIndex]) msg.voice=voices[voiceIndex];
+msg.rate=rate;
+msg.pitch=pitch;
+msg.volume=1;
+speechSynthesis.speak(msg);
+}
+
+function speak(){
+let text=document.getElementById("aiPracticeInput").value.trim();
+if(!text){
+alert("Type a script first");
+return;
+}
+speakText(text);
+}
+
+function stop(){
+speechSynthesis.cancel();
+}
+
+function defaultScript(){
+document.getElementById("aiPracticeInput").value=`Hello, this is Ava with Blands Real Estate Investors.
+
+We are calling to see if you would consider selling your property.
+
+If you are open to selling, I just have a few quick questions.
+
+Is the property vacant or occupied?
+
+Does it need repairs or updates?
+
+What price would you want for it?
+
+How soon would you want to sell?
+
+Would you consider a cash offer for a simple as-is sale?
+
+Thank you for your time.`;
+}
+
+/* AVA STAYS AVA PRACTICE */
+let recognition;
+let practiceRunning=false;
+
+const avaQuestions = [
+"Hi, this is Ava with Blands Real Estate Investors. I'm calling about a property we may be interested in buying. Would you ever consider selling it?",
+"Okay, thank you. Is the property a house or land?",
+"Does the property need any repairs or updates?",
+"Is the property vacant, rented, or owner occupied?",
+"Do you have a price in mind if you sold it?",
+"And how soon would you want to sell?",
+"Would you consider a simple cash offer if it made sense?",
+"Just curious, what has you thinking about selling?",
+"Thank you for sharing that. I'll pass this information to Mrs Bland so we can review the property. Someone from our team may reach out to discuss a possible offer."
+];
+
+let practiceIndex = -1;
+let fullSellerTranscript = [];
+
+function addPracticeMessage(role,text){
+const log=document.getElementById("practiceLog");
+const div=document.createElement("div");
+div.className="msg "+role;
+div.textContent=text;
+log.appendChild(div);
+log.scrollTop=log.scrollHeight;
+}
+
+function clearPracticeChat(){
+document.getElementById("practiceLog").innerHTML="";
+document.getElementById("callStatus").textContent="Not Started";
+practiceIndex=-1;
+fullSellerTranscript=[];
+speechSynthesis.cancel();
+}
+
+function askNextAvaQuestion(){
+practiceIndex++;
+
+if(practiceIndex >= avaQuestions.length){
+document.getElementById("callStatus").textContent="Finished";
+return;
+}
+
+const text = avaQuestions[practiceIndex];
+addPracticeMessage("ai", text);
+speakText(text);
+
+if(practiceIndex < avaQuestions.length - 1){
+document.getElementById("callStatus").textContent="Waiting For Seller";
+} else {
+document.getElementById("callStatus").textContent="Call Ending";
+}
+}
+
+function startSellerPractice(){
+clearPracticeChat();
+document.getElementById("callStatus").textContent="Started";
+askNextAvaQuestion();
+}
+
+function handleSellerAnswer(text){
+addPracticeMessage("user", text);
+fullSellerTranscript.push(text);
+
+if(practiceIndex === 0){
+const t = text.toLowerCase();
+if(
+t.includes("no") ||
+t.includes("not interested") ||
+t.includes("stop calling") ||
+t.includes("take me off")
+){
+addPracticeMessage("ai","No problem at all. Thank you for your time. Have a great day.");
+speakText("No problem at all. Thank you for your time. Have a great day.");
+document.getElementById("callStatus").textContent="Finished";
+return;
+}
+}
+
+setTimeout(()=>{
+askNextAvaQuestion();
+},700);
+}
+
+function startTalking(){
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+alert("Your browser does not support microphone speech recognition. Try Chrome or Edge.");
+return;
+}
+
+if(practiceIndex === -1){
+startSellerPractice();
+}
+
+recognition = new SpeechRecognition();
+recognition.lang = "en-US";
+recognition.continuous = true;
+recognition.interimResults = false;
+
+recognition.onstart = function(){
+practiceRunning=true;
+document.getElementById("micStatus").textContent="Listening";
+};
+
+recognition.onend = function(){
+practiceRunning=false;
+document.getElementById("micStatus").textContent="Idle";
+};
+
+recognition.onerror = function(){
+document.getElementById("micStatus").textContent="Mic Error";
+};
+
+recognition.onresult = function(event){
+let text="";
+for(let i=event.resultIndex;i<event.results.length;i++){
+if(event.results[i].isFinal){
+text += event.results[i][0].transcript + " ";
+}
+}
+text=text.trim();
+if(text){
+handleSellerAnswer(text);
+}
+};
+
+recognition.start();
+}
+
+function stopTalking(){
+if(recognition){
+recognition.stop();
+}
+speechSynthesis.cancel();
+document.getElementById("micStatus").textContent="Stopped";
+}
+
+loadVoices();
+render();
+</script>
+
+</body>
+</html>
