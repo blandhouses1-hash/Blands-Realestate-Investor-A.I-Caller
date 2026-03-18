@@ -266,6 +266,41 @@ Ava asks the questions. You answer like the seller.
 <input id="phone" placeholder="Phone">
 <input id="address" placeholder="Address">
 
+<select id="leadType">
+<option value="">Lead Type</option>
+<option>Pre-Foreclosure</option>
+<option>Notice of Default (NOD)</option>
+<option>Lis Pendens</option>
+<option>Trustee Sale</option>
+<option>Foreclosure Auction</option>
+<option>Probate</option>
+<option>Pre-Probate</option>
+<option>Estate Filing</option>
+<option>Executor Filing</option>
+<option>Inherited Property</option>
+<option>Tax Delinquent</option>
+<option>Tax Default</option>
+<option>Tax Lien</option>
+<option>Tax Auction</option>
+<option>Code Violations</option>
+<option>Nuisance Property</option>
+<option>Unsafe Structure</option>
+<option>Condemned Property</option>
+<option>Eviction Filing</option>
+<option>Unlawful Detainer</option>
+<option>Landlord Complaint</option>
+<option>Absentee Owner</option>
+<option>Vacant Property</option>
+<option>Tired Landlord</option>
+<option>Out-of-State Owner</option>
+<option>Bankruptcy</option>
+<option>Divorce Filing</option>
+<option>Job Transfer</option>
+<option>Fire Damage</option>
+<option>Hoarder House</option>
+<option>Major Repairs Needed</option>
+</select>
+
 <select id="status">
 <option>HOT</option>
 <option>WARM</option>
@@ -333,6 +368,7 @@ status:"HOT",
 owner:"John Smith",
 phone:"916-555-0123",
 address:"123 Main St Sacramento CA",
+leadType:"Probate",
 type:"House",
 condition:"Needs roof + paint",
 price:"$210,000",
@@ -350,6 +386,7 @@ let filtered=leads.filter(l=>
 l.owner.toLowerCase().includes(search)||
 l.address.toLowerCase().includes(search)||
 l.phone.toLowerCase().includes(search)||
+(l.leadType || "").toLowerCase().includes(search)||
 l.motivation.toLowerCase().includes(search)||
 l.transcript.toLowerCase().includes(search)
 );
@@ -368,6 +405,7 @@ html+=`
 <div class="lead-address">${l.address}</div>
 
 <div class="detail-box">Phone: ${l.phone}</div>
+<div class="detail-box">Lead Type: ${l.leadType || ""}</div>
 <div class="detail-box">Property: ${l.type}</div>
 <div class="detail-box">Condition: ${l.condition}</div>
 <div class="detail-box">Price: ${l.price}</div>
@@ -398,6 +436,7 @@ id:id?Number(id):Date.now(),
 owner:document.getElementById("owner").value,
 phone:document.getElementById("phone").value,
 address:document.getElementById("address").value,
+leadType:document.getElementById("leadType").value,
 status:document.getElementById("status").value,
 type:document.getElementById("type").value,
 condition:document.getElementById("condition").value,
@@ -428,6 +467,7 @@ document.getElementById("leadId").value=l.id;
 document.getElementById("owner").value=l.owner;
 document.getElementById("phone").value=l.phone;
 document.getElementById("address").value=l.address;
+document.getElementById("leadType").value=l.leadType || "";
 document.getElementById("status").value=l.status;
 document.getElementById("type").value=l.type;
 document.getElementById("condition").value=l.condition;
@@ -452,6 +492,7 @@ document.getElementById("leadId").value="";
 document.getElementById("owner").value="";
 document.getElementById("phone").value="";
 document.getElementById("address").value="";
+document.getElementById("leadType").value="";
 document.getElementById("status").value="HOT";
 document.getElementById("type").value="";
 document.getElementById("condition").value="";
@@ -470,6 +511,7 @@ status:"HOT",
 owner:"New Seller",
 phone:"000-000-0000",
 address:"New Property Address",
+leadType:"Tax Delinquent",
 type:"House",
 condition:"Needs repairs",
 price:"$150,000",
